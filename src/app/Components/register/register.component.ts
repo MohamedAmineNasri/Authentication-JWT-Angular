@@ -1,11 +1,8 @@
 import { Component } from '@angular/core';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  Validators,
-} from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
+import { AuthenticationResponse } from 'src/app/models/authentication-response';
+import { RegisterRequest } from 'src/app/models/register-request';
+import {AuthenticationService} from "../../services/authentication.service";
 
 
 
@@ -15,29 +12,34 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./register.component.css'],
 })
 export class RegisterComponent {
-  myForm!: FormGroup;
-  constructor(private ac: ActivatedRoute, private fb: FormBuilder) {}
 
-  ngOnInit() {
-    this.myForm = this.fb.group({
-      groupe1: this.fb.group({
-        first: [
-          '',
-          [
-            Validators.required,
-            Validators.minLength(3),
-            Validators.pattern('[a-zA-Z]*'),
-          ],
-        ],
-        last: [],
-        password: [],
-        birthdate: [],
-        monemail: [],
-      }),
-      profession: [],
-      category: ['', Validators.required],
-    });
+  registerRequest: RegisterRequest = {};
+  authResponse: AuthenticationResponse = {};
+  message = '';
+  otpCode = '';
 
+  constructor(
+    private authService: AuthenticationService,
+    private router: Router
+  ) {
+  }
+
+  registerUser() {
+    this.message = '';
+    this.authService.register(this.registerRequest)
+      .subscribe({
+        next: (response) => {
+          if (response) {
+            this.authResponse = response;
+          } else {
+            // inform the user
+            this.message = 'Account created successfully\nYou will be redirected to the Login page in 3 seconds';
+            setTimeout(() => {
+              this.router.navigate(['login']);
+            }, 3000)
+          }
+        }
+      });
 
   }
 }
