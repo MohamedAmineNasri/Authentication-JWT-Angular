@@ -9,6 +9,8 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { WelcomeComponent } from './Components/welcome/welcome.component';
 import {HttpClient, HttpClientModule} from "@angular/common/http";
+import {AuthenticationService} from "./services/authentication.service";
+import {JwtModule} from "@auth0/angular-jwt";
 
 
 @NgModule({
@@ -19,10 +21,20 @@ import {HttpClient, HttpClientModule} from "@angular/common/http";
     NgbModule,
     ReactiveFormsModule,
     HttpClientModule,
-    FormsModule
+    FormsModule,
+    JwtModule.forRoot({
+      config: {
+        tokenGetter: () => {
+          return localStorage.getItem('token');
+        },
+        allowedDomains: ['localhost:8089'], // Adjust the port based on your server
+        disallowedRoutes: ['localhost:8089/api/auth/logout'], // Adjust the port based on your server
+      },
+    }),
   ],
   providers: [
-    HttpClient
+    HttpClient,
+    AuthenticationService
   ],
   bootstrap: [AppComponent],
 })
