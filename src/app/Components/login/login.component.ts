@@ -16,6 +16,7 @@ export class LoginComponent {
   otpCode = '';
   authResponse: AuthenticationResponse = {};
 
+
   constructor(
     private authService: AuthenticationService,
     private router: Router
